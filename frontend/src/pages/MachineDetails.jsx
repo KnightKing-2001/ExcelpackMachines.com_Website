@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Settings, Info, CheckCircle2, Gauge, Wrench, Zap, Cpu } from 'lucide-react';
 import QuoteModal from '../components/QuoteModal';
-import { Helmet } from 'react-helmet-async'; // Imported correctly
 
 const MachineDetails = () => {
   const { id } = useParams();
@@ -21,6 +20,14 @@ const MachineDetails = () => {
       .then((data) => {
         setMachine(data);
         setLoading(false);
+
+        // SEO: Set Title and Description manually
+        document.title = `${data.modelName} | Packaging Machinery | Excelpack Machines`;
+        
+        let metaDescription = document.querySelector('meta[name="description"]');
+        if (metaDescription) {
+          metaDescription.setAttribute("content", `High-performance ${data.modelName} for ${data.category}. Expertly manufactured by Excelpack Machines.`);
+        }
       })
       .catch((err) => {
         console.error("Error fetching machine details:", err);
@@ -67,13 +74,6 @@ const MachineDetails = () => {
 
   return (
     <div className="pt-24 pb-24 bg-slate-50 min-h-screen font-sans">
-      {/* SEO META TAGS ADDED HERE */}
-      <Helmet>
-        <title>{machine.modelName} | Packaging Machinery | Excelpack Machines</title>
-        <meta name="description" content={`High-performance ${machine.modelName} for ${machine.category}. Expertly manufactured by Excelpack Machines.`} />
-        <link rel="canonical" href={`https://excelpackmachine.com/machine/${machine._id}`} />
-      </Helmet>
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <Link to="/#catalog" className="inline-flex items-center gap-2 text-slate-500 hover:text-orange-500 font-bold mb-8 transition-colors">
           <ArrowLeft className="w-4 h-4" />
@@ -127,7 +127,6 @@ const MachineDetails = () => {
                   Object.entries(specifications).map(([category, specs]) => {
                     const Config = categoryConfig[category] || { icon: Settings, title: category, color: 'text-slate-500', bg: 'bg-slate-100' };
                     const Icon = Config.icon;
-
                     return (
                       <div key={category} className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm hover:shadow-md transition-shadow">
                         <div className="flex items-center gap-3 mb-5 pb-4 border-b border-slate-100">
