@@ -12,7 +12,7 @@ const MachineDetails = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    fetch(`http://localhost:5000/api/machines/${id}`)
+    fetch(`https://excelpackmachines-com-website.onrender.com/api/machines/${id}`)
       .then((res) => {
         if (!res.ok) throw new Error('Machine not found');
         return res.json();
