@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Settings, Info, CheckCircle2, Gauge, Wrench, Zap, Cpu } from 'lucide-react';
 import QuoteModal from '../components/QuoteModal';
+import { Helmet } from 'react-helmet-async'; // Imported correctly
 
 const MachineDetails = () => {
   const { id } = useParams();
@@ -28,13 +29,11 @@ const MachineDetails = () => {
       });
   }, [id]);
 
-  // Formats camelCase (e.g., "powerRequirement") into Title Case ("Power Requirement")
   const formatSpecKey = (key) => {
     const spaced = key.replace(/([A-Z])/g, ' $1');
     return spaced.charAt(0).toUpperCase() + spaced.slice(1);
   };
 
-  // Configuration for our 4 specification buckets to give them unique icons and colors
   const categoryConfig = {
     performance: { icon: Gauge, title: 'Performance Capabilities', color: 'text-blue-500', bg: 'bg-blue-50' },
     mechanical: { icon: Wrench, title: 'Mechanical Build', color: 'text-slate-600', bg: 'bg-slate-100' },
@@ -68,8 +67,14 @@ const MachineDetails = () => {
 
   return (
     <div className="pt-24 pb-24 bg-slate-50 min-h-screen font-sans">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* SEO META TAGS ADDED HERE */}
+      <Helmet>
+        <title>{machine.modelName} | Packaging Machinery | Excelpack Machines</title>
+        <meta name="description" content={`High-performance ${machine.modelName} for ${machine.category}. Expertly manufactured by Excelpack Machines.`} />
+        <link rel="canonical" href={`https://excelpackmachine.com/machine/${machine._id}`} />
+      </Helmet>
 
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <Link to="/#catalog" className="inline-flex items-center gap-2 text-slate-500 hover:text-orange-500 font-bold mb-8 transition-colors">
           <ArrowLeft className="w-4 h-4" />
           Back to Fleet
@@ -79,10 +84,7 @@ const MachineDetails = () => {
           <div className="absolute top-0 right-0 w-96 h-96 bg-orange-500/5 rounded-full blur-3xl pointer-events-none"></div>
 
           <div className="grid lg:grid-cols-12 gap-12 relative z-10">
-
-            {/* Left Column: Visuals & Features (Takes up 5 columns) */}
             <div className="lg:col-span-5 flex flex-col gap-8">
-
               <div className="bg-slate-100 rounded-[32px] aspect-square flex flex-col items-center justify-center text-slate-400 border-2 border-dashed border-slate-200 relative overflow-hidden group">
                 <Settings className="w-16 h-16 mb-4 opacity-50 group-hover:rotate-180 transition-transform duration-700" />
                 <p className="font-bold tracking-widest uppercase text-sm">Machine Visualization</p>
@@ -91,7 +93,6 @@ const MachineDetails = () => {
                 </div>
               </div>
 
-              {/* DYNAMIC ENGINEERING FEATURES LIST */}
               {features.length > 0 && (
                 <div className="bg-slate-50 p-8 rounded-[32px] border border-slate-100">
                   <h3 className="text-xl font-black text-slate-900 mb-6">Key Engineering Features</h3>
@@ -107,7 +108,6 @@ const MachineDetails = () => {
               )}
             </div>
 
-            {/* Right Column: Descriptions & Nested Specifications (Takes up 7 columns) */}
             <div className="lg:col-span-7 flex flex-col">
               <div className="inline-flex items-center gap-2 bg-orange-500/10 px-4 py-1.5 rounded-full mb-6 border border-orange-500/20 w-fit">
                 <Info className="w-4 h-4 text-orange-600" />
@@ -122,11 +122,9 @@ const MachineDetails = () => {
                 {machine.description}
               </p>
 
-              {/* THE NESTED BUCKETS: Rendering the 4 categorized specification cards */}
               <div className="grid sm:grid-cols-2 gap-6 mb-12">
                 {Object.keys(specifications).length > 0 ? (
                   Object.entries(specifications).map(([category, specs]) => {
-                    // Grab the icon and colors for this specific category, fallback to default if not found
                     const Config = categoryConfig[category] || { icon: Settings, title: category, color: 'text-slate-500', bg: 'bg-slate-100' };
                     const Icon = Config.icon;
 
@@ -138,7 +136,6 @@ const MachineDetails = () => {
                           </div>
                           <h3 className="font-bold text-slate-900 tracking-tight">{Config.title}</h3>
                         </div>
-
                         <div className="space-y-4">
                           {Object.entries(specs).map(([key, value]) => (
                             <div key={key} className="flex flex-col gap-1">
@@ -155,9 +152,7 @@ const MachineDetails = () => {
                 )}
               </div>
 
-              {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 mt-auto">
-
                 <button
                   type="button"
                   onClick={(e) => {
@@ -168,7 +163,6 @@ const MachineDetails = () => {
                 >
                   Request Custom Quote
                 </button>
-
                 <a
                   href="/brochures/excelpack-catalog.pdf"
                   download="Excelpack-Machine-Specs.pdf"
@@ -177,12 +171,10 @@ const MachineDetails = () => {
                   Download Brochure
                 </a>
               </div>
-
             </div>
           </div>
         </div>
       </div>
-      {/* THE FIX: Added optional chaining to machine?.modelName */}
       <QuoteModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
