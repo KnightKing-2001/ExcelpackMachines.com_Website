@@ -6,22 +6,26 @@ const Catalog = () => {
   const navigate = useNavigate();
   const [machines, setMachines] = useState([])
   const [loading, setLoading] = useState(true)
-  
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('All')
-  
   const [visibleCount, setVisibleCount] = useState(6)
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/machines')
-      .then(res => res.json())
+    // Corrected to your production backend URL
+    const API_URL = 'https://excelpackmachines-com-website.onrender.com';
+    
+    fetch(`${API_URL}/api/machines`)
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch');
+        return res.json();
+      })
       .then(data => {
-        setMachines(data)
-        setLoading(false)
+        setMachines(data);
+        setLoading(false);
       })
       .catch(err => {
-        console.error("Error fetching catalog:", err)
-        setLoading(false)
+        console.error("Error fetching catalog:", err);
+        setLoading(false);
       })
   }, [])
 
@@ -46,7 +50,6 @@ const Catalog = () => {
       <div className="absolute top-40 left-0 w-96 h-96 bg-slate-200/50 rounded-full blur-3xl pointer-events-none -z-10"></div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 bg-slate-200/50 px-4 py-1.5 rounded-full mb-6 border border-slate-300/50">
@@ -96,9 +99,6 @@ const Catalog = () => {
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {displayedMachines.length > 0 ? displayedMachines.map((machine) => {
-                
-                // --- THE FIX: SMART DATA EXTRACTION ---
-                // We look inside the new 'performance' bucket to find the data.
                 const speed = machine.specifications?.performance?.productionSpeed 
                            || machine.specifications?.performance?.capacity 
                            || machine.specifications?.performance?.outputCapacity 
@@ -106,9 +106,8 @@ const Catalog = () => {
                            || "N/A";
                 
                 const application = machine.specifications?.performance?.pouchType 
-                                 || machine.specifications?.performance?.applications 
-                                 || "Industrial Standard";
-                // --------------------------------------
+                                  || machine.specifications?.performance?.applications 
+                                  || "Industrial Standard";
 
                 return (
                   <div key={machine._id} className="bg-white rounded-[32px] p-3 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 ease-[cubic-bezier(0.2,0,0,1)] border border-slate-100 flex flex-col group">
@@ -121,23 +120,18 @@ const Catalog = () => {
                         <span className="text-[10px] font-bold uppercase tracking-wider text-slate-900">{machine.category}</span>
                       </div>
                     </div>
-
                     <div className="px-5 pb-5 flex flex-col flex-grow">
                       <h3 className="text-2xl font-black text-slate-900 mb-6 group-hover:text-orange-600 transition-colors duration-300">{machine.modelName}</h3>
                       <div className="space-y-4 text-sm flex-grow mb-8">
-                        
                         <div className="flex justify-between items-center border-b border-slate-100 pb-3">
                           <span className="font-bold text-slate-500">Output / Speed</span> 
                           <span className="text-right font-black text-slate-900 bg-slate-50 px-3 py-1 rounded-lg line-clamp-1">{speed}</span>
                         </div>
-                        
                         <div className="flex justify-between items-center border-b border-slate-100 pb-3">
                           <span className="font-bold text-slate-500">Application</span> 
                           <span className="text-right font-semibold text-slate-700 text-xs line-clamp-1">{application}</span>
                         </div>
-
                       </div>
-                      
                       <button 
                         onClick={() => navigate(`/machine/${machine._id}`)}
                         className="w-full flex items-center justify-center gap-2 bg-slate-50 border border-slate-200 hover:bg-slate-900 hover:border-slate-900 text-slate-700 hover:text-white font-bold py-4 rounded-full transition-all duration-300 active:scale-95 ease-[cubic-bezier(0.2,0,0,1)]"
@@ -154,7 +148,6 @@ const Catalog = () => {
                  </div>
               )}
             </div>
-
             {filteredMachines.length > visibleCount && (
               <div className="mt-16 flex justify-center">
                 <button 
