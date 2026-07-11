@@ -2,11 +2,13 @@ const express = require('express');
     const mongoose = require('mongoose');
     const cors = require('cors');
     require('dotenv').config();
-
+    process.env.ALLOWED_ORIGIN
     const app = express();
 
     // Middleware
-    app.use(cors());
+    app.use(cors({
+      origin: process.env.ALLOWED_ORIGIN
+    }));
     app.use(express.json());
 
     // Database Connection
